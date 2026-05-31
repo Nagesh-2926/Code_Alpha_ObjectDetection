@@ -10,11 +10,15 @@ readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Codex" }]
 dependencies = [
+    "fastapi>=0.115.0",
     "lap>=0.5.13",
     "numpy>=1.26",
+    "onnx>=1.16.0",
     "opencv-python>=4.10.0",
     "PyYAML>=6.0.2",
+    "streamlit>=1.37.0",
     "ultralytics>=8.3.0",
+    "uvicorn>=0.30.0",
 ]
 
 [project.optional-dependencies]
@@ -24,6 +28,7 @@ dev = [
 
 [project.scripts]
 track-objects = "object_tracking.cli:main"
+export-yolo-onnx = "object_tracking.export:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

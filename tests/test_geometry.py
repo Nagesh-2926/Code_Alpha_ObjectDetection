@@ -1,4 +1,4 @@
-from object_tracking.geometry import bbox_center, crossing_direction, point_line_side
+from object_tracking.geometry import bbox_center, crossing_direction, point_in_polygon, point_line_side
 
 
 def test_bbox_center_returns_middle_point():
@@ -22,3 +22,9 @@ def test_crossing_direction_returns_out_for_positive_to_negative():
 
 def test_crossing_direction_returns_none_for_same_side():
     assert crossing_direction(1, 1) is None
+
+
+def test_point_in_polygon_accepts_inner_points():
+    polygon = [(0, 0), (10, 0), (10, 10), (0, 10)]
+    assert point_in_polygon((5, 5), polygon) is True
+    assert point_in_polygon((15, 5), polygon) is False

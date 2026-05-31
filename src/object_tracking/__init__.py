@@ -1,4 +1,4 @@
-"""Object detection and tracking package."""
+"""Advanced object detection and tracking package."""
 
 from .config import AppConfig
 from .pipeline import RunSummary, run_tracking

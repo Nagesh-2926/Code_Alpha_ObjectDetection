@@ -1,76 +1,75 @@
-project_name: "codealpha_object_detection_pro"
+project_name: "codealpha_object_detection_pro_demo"
 source: "0"
 
 model:
   weights: "yolov8n.pt"
-  tracker: "botsort.yaml"
-  confidence: 0.35
+  tracker: "bytetrack.yaml"
+  confidence: 0.30
   iou: 0.45
   image_size: 640
   device: "cpu"
-  classes: null
 
 output:
   show_window: true
   save_video: true
   save_analytics_json: true
   output_dir: "artifacts/runs"
-  window_name: "CodeAlpha Object Detection Pro"
-  video_name_prefix: "tracking_run"
-  analytics_name_prefix: "analytics_run"
+  window_name: "CodeAlpha Object Detection Pro Demo"
+  video_name_prefix: "pro_demo_run"
+  analytics_name_prefix: "pro_demo_analytics"
   display_scale: 1.0
 
 features:
   draw_trails: true
-  trail_length: 30
+  trail_length: 40
 
   analytics:
-    enable_line_counting: false
+    enable_line_counting: true
     count_line:
       - [200, 300]
       - [1000, 300]
 
-    enable_zone_counting: false
+    enable_zone_counting: true
     zones:
-      - name: "Main Zone"
+      - name: "Observation Zone"
         polygon:
-          - [100, 100]
-          - [1180, 100]
-          - [1180, 620]
-          - [100, 620]
+          - [80, 80]
+          - [1220, 80]
+          - [1220, 650]
+          - [80, 650]
         color: [0, 255, 0]
         count_classes: ["person", "car", "truck", "bus", "motorbike", "bicycle"]
         restricted: false
 
       - name: "Restricted Area"
         polygon:
-          - [850, 160]
-          - [1180, 160]
-          - [1180, 620]
-          - [850, 620]
-        color: [0, 80, 255]
+          - [860, 150]
+          - [1220, 150]
+          - [1220, 650]
+          - [860, 650]
+        color: [0, 120, 255]
         count_classes: ["person"]
         restricted: true
 
     intrusion:
-      enabled: false
+      enabled: true
       classes: ["person"]
       cooldown_frames: 45
 
     speed:
-      enabled: false
+      enabled: true
       pixels_per_meter: 12.0
       smoothing_window: 8
       classes: ["person", "car", "truck", "bus", "motorbike", "bicycle"]
 
   privacy:
-    enabled: false
+    enabled: true
     mode: "face"
     classes: ["person"]
     blur_kernel_size: 31
 
   pose:
-    enabled: false
+    enabled: true
     weights: "yolov8n-pose.pt"
     confidence: 0.35
     draw_labels: false

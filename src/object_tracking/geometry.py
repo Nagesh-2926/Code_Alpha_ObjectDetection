@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import math
 from typing import Iterable
+
+import cv2
+import numpy as np
 
 
 Point = tuple[int, int]
@@ -25,3 +29,19 @@ def crossing_direction(previous_side: int, current_side: int) -> str | None:
     if previous_side == current_side or 0 in (previous_side, current_side):
         return None
     return "in" if previous_side < current_side else "out"
+
+
+def point_in_polygon(point: Point, polygon: Iterable[Point]) -> bool:
+    polygon_array = np.array(list(polygon), dtype=np.int32)
+    return cv2.pointPolygonTest(polygon_array, point, False) >= 0
+
+
+def polygon_label_anchor(polygon: Iterable[Point]) -> Point:
+    points = list(polygon)
+    x = int(sum(point[0] for point in points) / len(points))
+    y = int(sum(point[1] for point in points) / len(points))
+    return x, y
+
+
+def euclidean_distance(point_a: Point, point_b: Point) -> float:
+    return math.hypot(point_b[0] - point_a[0], point_b[1] - point_a[1])

@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Object Detection (WhatsApp Video)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/app.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "--source",
+        "D:\\Downloads\\WhatsApp Video 2026-05-31 at 21.00.28.mp4"
+      ]
+    }
+  ]
+}

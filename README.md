@@ -1,207 +1,330 @@
-# Real-Time Object Detection and Tracking
+# CodeAlpha Object Detection Pro
 
-This project is a complete beginner-friendly, resume-ready computer vision application that detects objects with YOLO, tracks them with stable IDs, draws live overlays, saves the processed video, and can optionally count line crossings.
+Advanced real-time object detection, tracking, analytics, pose estimation, privacy protection, and deployment toolkit built on YOLOv8, OpenCV, and Ultralytics tracking.
 
-## What this project does
+This project has evolved from a basic detection-and-tracking demo into a more complete computer vision application that can serve as an internship showcase, portfolio project, or foundation for production-style experimentation.
 
-- Reads from a webcam or video file
-- Detects objects with YOLOv8
-- Tracks objects with `BoT-SORT` or `ByteTrack`
-- Draws bounding boxes, labels, IDs, trails, and FPS
-- Saves the final annotated video to `artifacts/runs`
-- Supports optional line-crossing counts for traffic or people analytics
+## Core Capabilities
 
-## Architecture Overview
+- Real-time object detection for common living and non-living object classes supported by YOLOv8
+- Persistent multi-object tracking with `BoT-SORT` or `ByteTrack`
+- Live bounding boxes, labels, centroids, trails, and FPS overlays
+- Polygon-based zone monitoring and occupancy counting
+- Line-crossing analytics
+- Intrusion detection for restricted zones
+- Speed estimation based on motion calibration
+- Privacy masking with face blur or full-person blur
+- Human pose estimation with body landmark visualization
+- Structured analytics export as JSON
+- Streamlit interface for upload-and-process workflows
+- FastAPI interface for service-style video processing
+- ONNX export utility for deployment workflows
 
-```text
-Webcam / Video File
-        ->
-OpenCV VideoCapture
-        ->
-YOLOv8 Detection
-        ->
-BoT-SORT / ByteTrack
-        ->
-Custom Overlay Renderer
-        ->
-Live Window + Saved MP4 Output
-```
-
-## Free Technology Stack
-
-- `Python` for application logic
-- `OpenCV` for video I/O and drawing
-- `Ultralytics YOLOv8` for object detection
-- `BoT-SORT` or `ByteTrack` for tracking
-- `PyTorch` as the deep learning runtime
-- `PyYAML` for project configuration
-- `pytest` for a small automated test layer
-
-## Project Structure
+## System Architecture
 
 ```text
-object_detection/
-├── app.py
-├── configs/
-│   └── default.yaml
-├── artifacts/
-├── src/
-│   └── object_tracking/
-│       ├── __init__.py
-│       ├── cli.py
-│       ├── config.py
-│       ├── geometry.py
-│       ├── pipeline.py
-│       └── visualization.py
-├── tests/
-│   └── test_geometry.py
-├── .gitignore
-├── pyproject.toml
-├── requirements.txt
-└── README.md
+Camera / Reference Video
+        ->
+Frame Capture (OpenCV)
+        ->
+YOLOv8 Detection + Tracking
+        ->
+Analytics Engine
+  - line counting
+  - zone counting
+  - intrusion alerts
+  - speed estimation
+        ->
+Optional Privacy Masking
+        ->
+Optional Pose Estimation
+        ->
+Visualization Layer
+        ->
+Preview Window + Output Video + Analytics JSON
 ```
 
-## Setup
+## Feature Breakdown
 
-### 0. One-command Windows setup
+### 1. Detection and Tracking
+
+The pipeline uses a YOLOv8 detection model with Ultralytics tracking to maintain stable IDs across frames. This allows the system to move beyond frame-by-frame detection and reason about object movement, occupancy, and behavior.
+
+### 2. Zone-Based Analytics
+
+Custom polygon zones can be defined in configuration. Each zone can:
+
+- count current tracked objects
+- record cumulative entries
+- restrict counting to selected classes
+- act as a restricted area for intrusion alerts
+
+### 3. Intrusion Detection
+
+Restricted zones can raise alerts when specific classes, such as `person`, enter protected regions. Cooldown logic prevents the same track from triggering duplicate alerts every frame.
+
+### 4. Speed Estimation
+
+Speed is estimated from tracked motion using a configurable `pixels_per_meter` calibration value. This is especially useful for traffic-style analytics or monitored movement zones.
+
+### 5. Privacy Masking
+
+Two masking modes are available:
+
+- `face`: blur detected faces, typically inside person detections
+- `person`: blur the full bounding box of selected classes
+
+### 6. Pose Estimation
+
+An optional YOLO pose model can overlay body landmarks and skeleton connections. This upgrades the project from plain object detection to richer human-activity analysis and body-part visualization.
+
+### 7. Interfaces and Deployment
+
+The project now includes:
+
+- a CLI pipeline for direct terminal usage
+- a Streamlit app for interactive usage
+- a FastAPI app for service-based processing
+- an ONNX export path for deployment optimization
+
+## Repository Layout
+
+```text
+CodeAlpha_Object_Detection/
+|-- app.py
+|-- api.py
+|-- streamlit_app.py
+|-- configs/
+|   |-- default.yaml
+|   `-- pro_demo.yaml
+|-- src/
+|   `-- object_tracking/
+|       |-- __init__.py
+|       |-- analytics.py
+|       |-- cli.py
+|       |-- config.py
+|       |-- export.py
+|       |-- geometry.py
+|       |-- pipeline.py
+|       |-- pose.py
+|       |-- privacy.py
+|       `-- visualization.py
+|-- tests/
+|   |-- test_analytics.py
+|   `-- test_geometry.py
+|-- .vscode/
+|-- artifacts/
+|-- Dockerfile
+|-- pyproject.toml
+|-- requirements.txt
+|-- setup.ps1
+`-- README.md
+```
+
+## Module Responsibilities
+
+- [app.py](D:\Downloads\CodeAlpha_Object_Detection\app.py:1)
+  Root launcher for the CLI tracking pipeline.
+
+- [api.py](D:\Downloads\CodeAlpha_Object_Detection\api.py:1)
+  FastAPI service for uploaded-video processing.
+
+- [streamlit_app.py](D:\Downloads\CodeAlpha_Object_Detection\streamlit_app.py:1)
+  Interactive web dashboard for upload, configuration, and result review.
+
+- [configs/default.yaml](D:\Downloads\CodeAlpha_Object_Detection\configs\default.yaml:1)
+  Baseline project configuration.
+
+- [configs/pro_demo.yaml](D:\Downloads\CodeAlpha_Object_Detection\configs\pro_demo.yaml:1)
+  Example pro-mode configuration with multiple advanced features enabled.
+
+- [analytics.py](D:\Downloads\CodeAlpha_Object_Detection\src\object_tracking\analytics.py:1)
+  Zone counting, intrusion alerts, class counts, and speed estimation.
+
+- [config.py](D:\Downloads\CodeAlpha_Object_Detection\src\object_tracking\config.py:1)
+  Strongly structured configuration model and YAML loading logic.
+
+- [pipeline.py](D:\Downloads\CodeAlpha_Object_Detection\src\object_tracking\pipeline.py:1)
+  Main runtime orchestration for capture, inference, analytics, overlays, output writing, and summary export.
+
+- [pose.py](D:\Downloads\CodeAlpha_Object_Detection\src\object_tracking\pose.py:1)
+  Pose-model result parsing and body landmark definitions.
+
+- [privacy.py](D:\Downloads\CodeAlpha_Object_Detection\src\object_tracking\privacy.py:1)
+  Face blur and person blur logic.
+
+- [visualization.py](D:\Downloads\CodeAlpha_Object_Detection\src\object_tracking\visualization.py:1)
+  Rendering for boxes, zones, alerts, trails, speed, and pose annotations.
+
+- [export.py](D:\Downloads\CodeAlpha_Object_Detection\src\object_tracking\export.py:1)
+  ONNX export command for deployment-oriented workflows.
+
+## Installation
+
+### Recommended setup
+
+From the project root:
 
 ```powershell
 .\setup.ps1
 ```
 
-### 1. Activate the virtual environment
-
-PowerShell:
+### Manual setup
 
 ```powershell
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
-
-### 2. Install PyTorch CPU wheels
-
-```powershell
 python -m pip install --upgrade pip
 python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-```
-
-### 3. Install the project
-
-```powershell
 python -m pip install ".[dev]"
 ```
 
-### Important Windows note
+## Running the Project
 
-This project automatically uses ASCII-safe temporary paths when OpenCV reads or writes video files. That matters on some Windows setups, including folders with names like `文档`, because OpenCV file I/O can be unreliable with non-ASCII paths.
-
-## Quick Start
-
-### Run on webcam
+### 1. Live webcam
 
 ```powershell
-python app.py --source 0
+cd "D:\Downloads\CodeAlpha_Object_Detection"
+.\.venv\Scripts\python.exe app.py --source 0
 ```
 
-### Run on a video file
+### 2. Reference video
 
 ```powershell
-python app.py --source .\sample_video.mp4
+cd "D:\Downloads\CodeAlpha_Object_Detection"
+.\.venv\Scripts\python.exe app.py --source "D:\Downloads\WhatsApp Video 2026-05-31 at 21.00.28.mp4"
 ```
 
-### Run without opening the display window
+### 3. Advanced CLI example
 
 ```powershell
-python app.py --source .\sample_video.mp4 --no-show
+.\.venv\Scripts\python.exe app.py --source "D:\Downloads\sample.mp4" --tracker bytetrack.yaml --zone-counting --intrusion --speed --pixels-per-meter 12 --pose --privacy-mode face
 ```
 
-### Use ByteTrack instead of BoT-SORT
+### 4. Run the Streamlit app
 
 ```powershell
-python app.py --source 0 --tracker bytetrack.yaml
+cd "D:\Downloads\CodeAlpha_Object_Detection"
+.\.venv\Scripts\python.exe -m streamlit run streamlit_app.py
 ```
 
-### Count objects crossing a custom line
+### 5. Run the FastAPI app
 
 ```powershell
-python app.py --source .\sample_video.mp4 --line-counting --line 200 300 1000 300
+cd "D:\Downloads\CodeAlpha_Object_Detection"
+.\.venv\Scripts\python.exe -m uvicorn api:app --reload
 ```
 
-## Important CLI Options
-
-- `--source`: `0` for webcam, or a video path
-- `--model`: model weights such as `yolov8n.pt` or `yolov8s.pt`
-- `--tracker`: `botsort.yaml` or `bytetrack.yaml`
-- `--conf`: confidence threshold
-- `--iou`: IoU threshold
-- `--imgsz`: inference size
-- `--device`: `cpu` or a CUDA device index when available
-- `--classes`: class filter, for example `0,2,3`
-- `--no-show`: skip the live preview window
-- `--no-save`: skip writing the output video
-- `--display-scale`: resize only the preview window
-
-## Output
-
-- Processed videos are saved into `artifacts/runs/`
-- The output filename includes a timestamp so runs do not overwrite each other
-- Press `Q` in the OpenCV window to stop early
-
-## Docker
-
-Build the image:
+### 6. Export YOLO to ONNX
 
 ```powershell
-docker build -t object-tracking-cpu .
+cd "D:\Downloads\CodeAlpha_Object_Detection"
+.\.venv\Scripts\export-yolo-onnx.exe --weights yolov8n.pt --imgsz 640 --simplify
 ```
 
-Run a headless batch job:
+## Configuration Model
+
+Main configuration groups:
+
+- `model`
+  Detection weights, confidence, image size, device, and tracker selection
+
+- `output`
+  Preview, video saving, analytics JSON saving, and output naming
+
+- `features.analytics`
+  Line counting, zone counting, intrusion detection, and speed estimation
+
+- `features.privacy`
+  Privacy masking configuration
+
+- `features.pose`
+  Pose model weights, confidence, and label display
+
+## Output Artifacts
+
+The project can produce:
+
+- annotated output videos in `artifacts/runs/`
+- analytics JSON summaries in `artifacts/runs/`
+- real-time visual overlays in the preview window
+
+## VS Code Support
+
+The repository includes a ready-to-use VS Code launch configuration in:
+
+- [launch.json](D:\Downloads\CodeAlpha_Object_Detection\.vscode\launch.json:1)
+- [settings.json](D:\Downloads\CodeAlpha_Object_Detection\.vscode\settings.json:1)
+
+You can press `F5` in VS Code and launch the configured video run directly.
+
+## Validation
+
+Current validation includes:
+
+- syntax compilation for the upgraded modules
+- unit tests for geometry and analytics helpers
+- successful processing of the WhatsApp reference video with output video generation
+
+Run tests with:
 
 ```powershell
-docker run --rm -v ${PWD}/artifacts:/app/artifacts -v ${PWD}/data:/data object-tracking-cpu
+.\.venv\Scripts\python.exe -m pytest -q
 ```
-
-Place your input video at `data/input.mp4` before running the container, or change the Docker `CMD`.
-
-## How tracking works
-
-- YOLO finds objects in each frame
-- The tracker compares motion and appearance between frames
-- Each object gets a persistent ID like `ID 4`
-- The trail lines show where each tracked object moved
 
 ## Troubleshooting
 
-### The webcam does not open
+### Slow inference on CPU
 
-- Close any other app using the camera
-- Try `--source 1` if another camera index is active
-- Confirm Windows camera permissions are enabled
+- Use `yolov8n.pt`
+- keep `imgsz` moderate, such as `640` or `512`
+- disable pose when not needed
+- disable preview using `--no-show` for offline runs
 
-### The app is slow
+### Privacy masking not triggering
 
-- Use the smaller `yolov8n.pt` model
-- Lower the image size with `--imgsz 512`
-- Run with `--display-scale 0.8`
-- Disable the preview using `--no-show`
+- use `--privacy-mode face` for face blur
+- use `--privacy-mode person` to blur the full person box
+- ensure the source has visible faces if using face mode
 
-### I see a missing package error
+### Speed values look unrealistic
 
-- Activate `.venv`
-- Re-run the install commands
-- Check that `torch`, `opencv-python`, and `ultralytics` installed successfully
+- adjust `pixels_per_meter` in config or CLI
+- speed estimation depends on scene calibration and camera perspective
 
-## Resume-Ready Project Ideas
+### Zone counts look wrong
 
-- Vehicle counting at an entrance gate
-- Person counting in a retail store
-- Safety monitoring for helmets or vests
-- Intrusion detection in a restricted area
-- Traffic analytics with line crossing and zones
+- update zone polygons in the YAML config to match the real frame layout
+- restrict `count_classes` per zone to reduce noise
 
-## Next Upgrade Ideas
+## Project History
 
-- Polygon zone counting
-- Speed estimation
-- Streamlit or FastAPI dashboard
-- Model export to ONNX
-- Docker packaging for headless batch processing
+### Version 1.0
+
+- basic YOLOv8 object detection
+- tracking IDs
+- line counting
+- output video saving
+
+### Version 2.0
+
+- zone-based counting
+- intrusion detection
+- speed estimation
+- privacy masking
+- pose estimation
+- Streamlit interface
+- FastAPI interface
+- ONNX export support
+- richer configuration model and analytics output
+
+## Future Extensions
+
+Possible next upgrades:
+
+- polygon heatmaps
+- multi-camera fusion
+- ReID-based long-term tracking
+- database-backed event storage
+- alert notification integrations
+- TensorRT or OpenVINO deployment optimization
