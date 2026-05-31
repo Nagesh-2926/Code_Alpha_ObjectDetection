@@ -1,0 +1,27 @@
+project_name: "real_time_object_detection_tracking"
+source: "0"
+
+model:
+  weights: "yolov8n.pt"
+  tracker: "botsort.yaml"
+  confidence: 0.35
+  iou: 0.45
+  image_size: 640
+  device: "cpu"
+  classes: null
+
+output:
+  show_window: true
+  save_video: true
+  output_dir: "artifacts/runs"
+  window_name: "Real-Time Object Detection and Tracking"
+  video_name_prefix: "tracking_run"
+  display_scale: 1.0
+
+features:
+  draw_trails: true
+  trail_length: 30
+  enable_line_counting: false
+  count_line:
+    - [200, 300]
+    - [1000, 300]
