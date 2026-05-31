@@ -111,6 +111,7 @@ CodeAlpha_Object_Detection/
 |       `-- visualization.py
 |-- tests/
 |   |-- test_analytics.py
+|   |-- test_api.py
 |   `-- test_geometry.py
 |-- .vscode/
 |-- artifacts/
@@ -263,8 +264,9 @@ You can press `F5` in VS Code and launch the configured video run directly.
 Current validation includes:
 
 - syntax compilation for the upgraded modules
-- unit tests for geometry and analytics helpers
+- unit tests for geometry, analytics, and FastAPI flows
 - successful processing of the WhatsApp reference video with output video generation
+- successful smoke processing of `artifacts/demo_input.mp4` with synchronized video and analytics output naming
 
 Run tests with:
 
@@ -317,6 +319,13 @@ Run tests with:
 - FastAPI interface
 - ONNX export support
 - richer configuration model and analytics output
+
+### Version 2.1
+
+- synchronized run IDs for output video and analytics JSON artifacts
+- stronger FastAPI input validation and error handling
+- stronger Streamlit input validation and failure reporting
+- API test coverage for health and upload-processing flows
 
 ## Future Extensions
 

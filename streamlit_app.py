@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import json
-import shutil
 import sys
-import tempfile
 from pathlib import Path
 
 import streamlit as st
@@ -57,6 +55,8 @@ if st.button("Process Video", type="primary"):
     selected_source = _materialize_input_file()
     if not selected_source:
         st.error("Provide either an uploaded file or a local source path.")
+    elif not Path(selected_source).exists():
+        st.error(f"Input source not found: {selected_source}")
     else:
         overrides: dict[str, object] = {
             "source": selected_source,
@@ -74,9 +74,13 @@ if st.button("Process Video", type="primary"):
         if privacy_mode != "disabled":
             overrides["features"]["privacy"] = {"enabled": True, "mode": privacy_mode}
 
-        with st.spinner("Running detection and tracking pipeline..."):
-            config = load_config(str(PROJECT_ROOT / "configs" / "default.yaml"), overrides=overrides)
-            summary = run_tracking(config)
+        try:
+            with st.spinner("Running detection and tracking pipeline..."):
+                config = load_config(str(PROJECT_ROOT / "configs" / "default.yaml"), overrides=overrides)
+                summary = run_tracking(config)
+        except Exception as exc:
+            st.error(f"Processing failed: {exc}")
+            st.stop()
 
         st.success("Processing complete.")
         if summary.output_path:

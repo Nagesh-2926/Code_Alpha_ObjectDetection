@@ -138,18 +138,16 @@ def _prepare_writer_target(output_path: Path) -> tuple[Path, Path | None]:
     return temp_path, temp_path
 
 
-def _resolve_output_path(config: AppConfig) -> Path:
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+def _resolve_output_path(config: AppConfig, run_id: str) -> Path:
     output_dir = Path(config.output.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    return output_dir / f"{config.output.video_name_prefix}_{timestamp}.mp4"
+    return output_dir / f"{config.output.video_name_prefix}_{run_id}.mp4"
 
 
-def _resolve_analytics_path(config: AppConfig) -> Path:
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+def _resolve_analytics_path(config: AppConfig, run_id: str) -> Path:
     output_dir = Path(config.output.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    return output_dir / f"{config.output.analytics_name_prefix}_{timestamp}.json"
+    return output_dir / f"{config.output.analytics_name_prefix}_{run_id}.json"
 
 
 def _build_video_writer(capture: cv2.VideoCapture, output_path: Path) -> cv2.VideoWriter:
@@ -229,6 +227,7 @@ def run_tracking(config: AppConfig) -> RunSummary:
     LOGGER.info("Loading YOLO model: %s", config.model.weights)
     detection_model = YOLO(config.model.weights)
     pose_model = YOLO(config.features.pose.weights) if config.features.pose.enabled else None
+    run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     capture_source, temp_input_path = _prepare_capture_source(config.source)
     capture = cv2.VideoCapture(capture_source)
@@ -236,8 +235,8 @@ def run_tracking(config: AppConfig) -> RunSummary:
         raise RuntimeError(f"Could not open video source: {config.source}")
 
     source_fps = capture.get(cv2.CAP_PROP_FPS)
-    output_path: Path | None = _resolve_output_path(config) if config.output.save_video else None
-    analytics_path: Path | None = _resolve_analytics_path(config) if config.output.save_analytics_json else None
+    output_path: Path | None = _resolve_output_path(config, run_id) if config.output.save_video else None
+    analytics_path: Path | None = _resolve_analytics_path(config, run_id) if config.output.save_analytics_json else None
     writer_path: Path | None = None
     temp_output_path: Path | None = None
     if output_path:

@@ -5,7 +5,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -34,9 +34,15 @@ async def process_video(
     speed: bool = Form(False),
     intrusion: bool = Form(False),
 ) -> dict[str, object]:
+    if tracker not in {"botsort.yaml", "bytetrack.yaml"}:
+        raise HTTPException(status_code=400, detail="tracker must be either 'botsort.yaml' or 'bytetrack.yaml'.")
+
+    if privacy_mode and privacy_mode not in {"face", "person"}:
+        raise HTTPException(status_code=400, detail="privacy_mode must be empty, 'face', or 'person'.")
+
     with tempfile.TemporaryDirectory() as temporary_directory:
         temp_dir = Path(temporary_directory)
-        input_path = temp_dir / file.filename
+        input_path = temp_dir / Path(file.filename or "upload.mp4").name
         with input_path.open("wb") as handle:
             shutil.copyfileobj(file.file, handle)
 
@@ -61,8 +67,13 @@ async def process_video(
             overrides.setdefault("features", {})
             overrides["features"]["privacy"] = {"enabled": True, "mode": privacy_mode}
 
-        config = load_config(str(PROJECT_ROOT / "configs" / "default.yaml"), overrides=overrides)
-        summary = run_tracking(config)
+        try:
+            config = load_config(str(PROJECT_ROOT / "configs" / "default.yaml"), overrides=overrides)
+            summary = run_tracking(config)
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Video processing failed: {exc}") from exc
         return {
             "source": summary.source,
             "frames_processed": summary.frames_processed,
