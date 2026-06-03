@@ -337,4 +337,4 @@ Possible next upgrades:
 - database-backed event storage
 - alert notification integrations
 - TensorRT or OpenVINO deployment optimization
-"# Code_Alpha_ObjectDetection" 
+
