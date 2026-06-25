@@ -152,8 +152,8 @@ def draw_frame(
     alert_lines = analytics.active_alerts[:2]
 
     all_lines = panel_lines + zone_lines + alert_lines
-    panel_height = max(170, 25 + len(all_lines) * 18)
-    panel_width = 520
+    panel_height = max(120, 20 + len(all_lines) * 14)
+    panel_width = 280
     cv2.rectangle(annotated, (15, 15), (15 + panel_width, 15 + panel_height), (20, 20, 20), -1)
     cv2.rectangle(annotated, (15, 15), (15 + panel_width, 15 + panel_height), (0, 200, 255), 2)
 
@@ -162,9 +162,9 @@ def draw_frame(
         cv2.putText(
             annotated,
             line,
-            (30, 40 + index * 18),
+            (25, 35 + index * 14),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.52,
+            0.4,
             text_color,
             1,
             cv2.LINE_AA,

@@ -185,7 +185,7 @@ python -m pip install ".[dev]"
 ### 1. Live webcam
 
 ```powershell
-cd "D:\Downloads\CodeAlpha_Object_Detection"
+cd "CodeAlpha_Object_Detection"
 .\.venv\Scripts\python.exe app.py --source 0
 ```
 
@@ -201,7 +201,7 @@ cd "D:\Downloads\CodeAlpha_Object_Detection"
 ```powershell
 .\.venv\Scripts\python.exe app.py --source "D:\Downloads\sample.mp4" --tracker bytetrack.yaml --zone-counting --intrusion --speed --pixels-per-meter 12 --pose --privacy-mode face
 ```
-
+ 
 ### 4. Run the Streamlit app
 
 ```powershell
